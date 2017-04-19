@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/background"
+    >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginBottom="10dp"
+        android:padding="10dp"
+        android:background="@color/item_background">
+        <TextView
+            android:id="@+id/tv_joke_text"
+            android:lineSpacingExtra="8dp"
+            android:textSize="17sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/item_joke_context"/>
+
+        <!--<include layout="@layout/item_joke_common"/>-->
+    </LinearLayout>
+
+</LinearLayout>
