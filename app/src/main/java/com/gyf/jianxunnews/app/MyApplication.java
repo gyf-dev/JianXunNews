@@ -2,7 +2,9 @@ package com.gyf.jianxunnews.app;
 
 import android.app.Application;
 
-import com.gyf.jianxunnews.component.AppComponent;
+import com.gyf.jianxunnews.dagger.component.AppComponent;
+
+import cn.bingoogolapple.swipebacklayout.BGASwipeBackManager;
 
 
 /**
@@ -17,6 +19,7 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
         initApplication();
+        BGASwipeBackManager.getInstance().init(this);
     }
 
     private void initApplication() {

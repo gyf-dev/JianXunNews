@@ -7,4 +7,7 @@
         <attr name="text_color" format="color" />
         <attr name="text_size" format="dimension" />
     </declare-styleable>
+    <declare-styleable name="CircleTextProgressbar">
+        <attr name="in_circle_color" format="color" />
+    </declare-styleable>
 </resources>

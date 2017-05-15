@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">JIanXunNews</string>
+    <string name="app_name">简讯新闻</string>
     <string name="news_tab_text">新闻</string>
     <string name="joke_tab_text">笑话</string>
     <string name="handpick_tab_text">精选</string>

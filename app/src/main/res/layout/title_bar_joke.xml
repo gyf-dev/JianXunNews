@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="70dp"
+    android:layout_height="@dimen/status_bar_height"
     android:background="@color/colorPrimary">
 
     <LinearLayout
@@ -73,6 +73,7 @@
             android:layout_marginRight="15dp"
             android:layout_marginTop="7dp"
             android:gravity="center"
-            android:src="@mipmap/find_tab_status"/>
+            android:src="@mipmap/find_tab_status"
+            android:visibility="invisible"/>
     </LinearLayout>
 </RelativeLayout>

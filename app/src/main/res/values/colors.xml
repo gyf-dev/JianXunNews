@@ -10,6 +10,7 @@
     <color name="background">#F4F3F8</color>
     <color name="item_background">#FAFAFA</color>
     <color name="item_joke_context">#484848</color>
+    <color name="timer_background">#66000000</color>
 
     <!-- LIST BORDER COLOR -->
     <color name="rounded_container_border">#ffb7babb</color>

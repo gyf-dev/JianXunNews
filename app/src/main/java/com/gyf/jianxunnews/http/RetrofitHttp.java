@@ -1,16 +1,22 @@
 package com.gyf.jianxunnews.http;
 
 import com.gyf.jianxunnews.app.MyApplication;
-import com.gyf.jianxunnews.model.bean.IJokeBean;
-import com.gyf.jianxunnews.model.bean.TodayBean;
+import com.gyf.jianxunnews.mvp.model.bean.AliBean;
+import com.gyf.jianxunnews.mvp.model.bean.JokeBean;
+import com.gyf.jianxunnews.mvp.model.bean.NewsStatusBean;
+import com.gyf.jianxunnews.mvp.model.bean.TodayBean;
 import com.gyf.jianxunnews.utils.FileUtils;
-import com.gyf.jianxunnews.utils.UrlUtil;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.ObservableTransformer;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
@@ -21,20 +27,23 @@ import retrofit2.converter.gson.GsonConverterFactory;
 /**
  * Created by geyifeng on 2017/4/1.
  */
-
 public class RetrofitHttp {
 
     private static RetrofitHttp mInstance;
-    private ApiService mJokeService;
+    private ApiService mApiService;
+    private Retrofit.Builder mBuilder;
 
     private RetrofitHttp() {
-        Retrofit mRetrofit = new Retrofit.Builder()
+        mBuilder = new Retrofit.Builder()
                 .client(client())
-                .baseUrl(UrlUtil.JOKE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .build();
-        mJokeService = mRetrofit.create(ApiService.class);
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create());
+//        Retrofit mRetrofit = new Retrofit.Builder()
+//                .client(client())
+//                .baseUrl(url)
+//                .addConverterFactory(GsonConverterFactory.create())
+//                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+//                .build();
     }
 
     public static RetrofitHttp getInstance() {
@@ -46,8 +55,15 @@ public class RetrofitHttp {
         return mInstance;
     }
 
+    public RetrofitHttp baseUrl(String url) {
+        Retrofit mRetrofit = mBuilder.baseUrl(url).build();
+        mApiService = mRetrofit.create(ApiService.class);
+        return mInstance;
+    }
+
     private OkHttpClient client() {
         return new OkHttpClient.Builder()
+                .retryOnConnectionFailure(true)
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .writeTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS)
@@ -55,36 +71,69 @@ public class RetrofitHttp {
                         1024 * 1024 * 10))
                 .addInterceptor(new CacheInterceptor2())
                 .addNetworkInterceptor(new CacheInterceptor2())
-                .addInterceptor(new JokeInterceptor())
+                .addInterceptor(new AliInterceptor())
                 .build();
     }
 
-    public void loadTextJoke(Map<String, String> map, Observer<IJokeBean> observer) {
-        mJokeService.getTextJoke(map)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+    /**
+     * 笑话接口
+     *
+     * @param jokeType the joke type
+     * @param map      the map
+     * @param observer the observer
+     */
+    public void loadJoke(String jokeType, Map<String, String> map, Observer<JokeBean> observer) {
+        mApiService.getJoke(jokeType, map)
+                .map(new Function<AliBean<JokeBean>, JokeBean>() {
+                    @Override
+                    public JokeBean apply(@NonNull AliBean<JokeBean> jokeBeanAliBean) throws Exception {
+                        return jokeBeanAliBean.showapi_res_body;
+                    }
+                })
+                .compose(this.<JokeBean>schedulersTransformer())
                 .subscribe(observer);
     }
 
-    public void loadPicJoke(Map<String, String> map, Observer<IJokeBean> observer) {
-        mJokeService.getPicJoke(map)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observer);
-    }
-
-    public void loadGifJoke(Map<String, String> map, Observer<IJokeBean> observer) {
-        mJokeService.getGifJoke(map)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observer);
-    }
-
+    /**
+     * 历史上的今天接口
+     *
+     * @param data     the data
+     * @param observer the observer
+     */
     public void loadToday(String data, Observer<TodayBean> observer) {
-        mJokeService.getToday(data)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+        mApiService.getToday(data)
+                .map(new Function<AliBean<TodayBean>, TodayBean>() {
+                    @Override
+                    public TodayBean apply(@NonNull AliBean<TodayBean> todayBeanAliBean) throws Exception {
+                        return todayBeanAliBean.showapi_res_body;
+                    }
+                })
+                .compose(this.<TodayBean>schedulersTransformer())
                 .subscribe(observer);
+    }
+
+    /**
+     * 新闻接口
+     *
+     * @param map      the map
+     * @param observer the observer
+     */
+    public void loadNews(Map<String, String> map, Observer<NewsStatusBean> observer) {
+        mApiService.getNews(map)
+                .compose(this.<NewsStatusBean>schedulersTransformer())
+                .subscribe(observer);
+    }
+
+    private <T> ObservableTransformer<T, T> schedulersTransformer() {
+
+        return new ObservableTransformer<T, T>() {
+
+            @Override
+            public ObservableSource<T> apply(Observable<T> upstream) {
+                return upstream.subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread());
+            }
+        };
     }
 
 }

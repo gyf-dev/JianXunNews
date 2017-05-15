@@ -20,9 +20,16 @@ public class GlideUtils {
     public static void load(String s, ImageView imageView){
         Glide.with(MyApplication.getComponent().context())
                 .load(s)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .placeholder(R.mipmap.glide)
                 .listener(new RatioRequestListener(imageView))
+                .into(imageView);
+    }
+    public static void load2(String s, ImageView imageView){
+        Glide.with(MyApplication.getComponent().context())
+                .load(s)
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .placeholder(R.mipmap.glide)
                 .into(imageView);
     }
 

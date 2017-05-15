@@ -12,4 +12,9 @@
         <item name="android:paddingLeft">13dp</item>
     </style>
 
+    <style name="AppTheme.Transparent">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+    </style>
+
 </resources>

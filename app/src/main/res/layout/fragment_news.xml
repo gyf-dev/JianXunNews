@@ -1,24 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tl="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
     <include layout="@layout/title_bar_news" />
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="35dp"
+        android:gravity="center"
+        android:orientation="horizontal">
 
-        <com.gyf.jianxunnews.ui.LoadView
-            android:id="@+id/load_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+        <com.flyco.tablayout.SlidingTabLayout
+            android:id="@+id/sliding"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            tl:tl_indicator_color="@color/colorPrimary"
+            tl:tl_indicator_height="1.5dp"
+            tl:tl_indicator_margin_left="8dp"
+            tl:tl_indicator_margin_right="8dp"
+            tl:tl_textSelectColor="@color/colorPrimary"
+            tl:tl_textUnselectColor="#66000000" />
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv_joke_text"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </FrameLayout>
+        <ImageView
+            android:id="@+id/iv_find_news"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="10dp"
+            android:paddingEnd="4dp"
+            android:paddingStart="4dp"
+            android:paddingTop="10dp"
+            android:src="@mipmap/find_news" />
+    </LinearLayout>
+
+    <com.gyf.jianxunnews.view.CustomViewPager
+        android:id="@+id/vp_news_common"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </LinearLayout>
